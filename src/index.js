@@ -2,9 +2,11 @@
 
 // import { authenticate } from 'pixabay-api';
 // const { searchImages, searchVideos } = authenticate(AUTH_KEY);
+import SimpleLightbox from 'simplelightbox';
+
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import Notiflix from 'notiflix';
-import debounce from 'lodash.debounce';
 
 // переменные
 const refs = {
@@ -38,6 +40,7 @@ refs.buttSubmit.addEventListener('click', async el => {
       refs.variables.totalHits = data.totalHits;
       console.log(data);
       requestValidation(data);
+      amountImg();
     });
 
     refs.variables.request = refs.form.children[0].value.trim();
@@ -84,10 +87,12 @@ function requestValidation(data) {
 
 // отрисовка карточек
 function listGeneration(data) {
+  console.log(data);
   const markup = data
     .map(
       img =>
-        `<div class="photo-card">
+        `<a class="gallery__item" href="${img.webformatURL}">
+        <div class="photo-card">
       <div class='box-img'>
         <img src="${img.webformatURL}" alt="${img.tags}" loading="lazy" />
       </div>
@@ -109,22 +114,34 @@ function listGeneration(data) {
           ${img.downloads}
         </p>
       </div>
-    </div>`
+    </div>
+    </a>`
     )
     .join('');
 
   if (!refs.variables.addPage) {
-    return (refs.boxImg.innerHTML = markup);
+    refs.boxImg.innerHTML = markup;
+    return lightBox();
   }
 
   refs.boxImg.insertAdjacentHTML('beforeend', markup);
   learnMoreValidation();
+  lightBox().refresh();
 }
 
 function learnMoreValidation() {
   if (refs.variables.totalHits <= refs.boxImg.childNodes.length) {
     return errorMaxImg();
   }
+}
+
+// lightBox
+function lightBox() {
+  const gallery = new SimpleLightbox('.gallery a');
+  gallery.on('show.simplelightbox', function () {
+    gallery.options.captionsData = 'alt';
+    gallery.options.captionDelay = '250ms';
+  });
 }
 
 // ошибка запроса
@@ -139,5 +156,12 @@ function errorMaxImg() {
   refs.buttBox.style.display = 'none';
   Notiflix.Notify.warning(
     `We're sorry, but you've reached the end of search results.`
+  );
+}
+
+//вуведомление о кол-ве найденых картинок
+function amountImg() {
+  Notiflix.Notify.success(
+    `Hooray! We found ${refs.variables.totalHits} images.`
   );
 }

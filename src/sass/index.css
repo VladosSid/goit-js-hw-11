@@ -109,8 +109,10 @@
   padding-top: 90px;
 }
 
-.photo-card {
-  flex-basis: calc((100% - 60px) / 4);
+.gallery__item {
+  flex-basis: calc((100% - 80px) / 5);
+  text-decoration: none;
+  color: #000000;
   height: 250px;
   display: flex;
   flex-direction: column;
