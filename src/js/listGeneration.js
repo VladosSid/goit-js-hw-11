@@ -2,6 +2,11 @@ import { refs } from './variables';
 import { learnMoreValidation } from './validationReques';
 import { lightBox } from './liteBox';
 
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
+const gallery = new SimpleLightbox('.gallery a');
+
 // отрисовка карточек
 export function listGeneration(data) {
   const markup = data
@@ -38,12 +43,12 @@ export function listGeneration(data) {
   if (!refs.variables.addPage) {
     refs.boxImg.innerHTML = markup;
     learnMoreValidation();
-    lightBox();
+    gallery.refresh();
 
     return (refs.variables.liteBox = true);
   }
 
   refs.boxImg.insertAdjacentHTML('beforeend', markup);
-  lightBox();
+  gallery.refresh();
   learnMoreValidation();
 }
